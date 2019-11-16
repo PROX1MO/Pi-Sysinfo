@@ -1,5 +1,5 @@
 <?php
-//	modified by PROXIMO https://gist.github.com/PROX1MO
+//	modified by PROXIMO https://github.com/PROX1MO/Pi-Sysinfo
 	header("Cache-Control: no-cache, must-revalidate");
 	header("Expires: Sat, 26 May 1999 13:00:00 GMT");
 	header("Pragma: no-cache");
