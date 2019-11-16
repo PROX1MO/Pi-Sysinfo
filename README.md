@@ -18,15 +18,4 @@ You need to have php Safe Mode disabled!
 * RAM and Swap Usage
 * Disk Usage
 
-
-TODO
-====
-* json output
-* vnstat compatibility
-* load averages (0.01, 0.02, 0.05)
-* wan informarion
-* ip information
-* interface support
-* bug fixes
-* twitter support
-
+<img src="https://cloud.githubusercontent.com/assets/17911448/20943288/81ce2d9a-bc07-11e6-8e94-d59df03a63ef.PNG" title="Sample">
