@@ -17,5 +17,7 @@ You need to have php Safe Mode disabled!
 * Uptime
 * RAM and Swap Usage
 * Disk Usage
-
+```
+requires cpufrequtils > sudo apt-get install cpufrequtils
+```
 <img src="https://cloud.githubusercontent.com/assets/17911448/20943288/81ce2d9a-bc07-11e6-8e94-d59df03a63ef.PNG" title="Sample">
