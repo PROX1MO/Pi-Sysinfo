@@ -462,7 +462,7 @@
 		</table>
 		<table align="center">
 			<tr>
-				<td class="left darkbackground"><a style="font-size:12px; color: #000000;" href="https://gist.github.com/PROX1MO" title="Download" target="_blank">Source</a></td><td class="right darkbackground"><a style="font-size:12px; color: #000000;" href="javascript:location.reload(true);" title="Auto refresh every 60s">Refresh</a></td>
+				<td class="left darkbackground"><a style="font-size:12px; color: #000000;" href="https://github.com/PROX1MO/Pi-Sysinfo" title="Download" target="_blank">Source</a></td><td class="right darkbackground"><a style="font-size:12px; color: #000000;" href="javascript:location.reload(true);" title="Auto refresh every 60s">Refresh</a></td>
 			</tr>
 		</table>
 	</div>
