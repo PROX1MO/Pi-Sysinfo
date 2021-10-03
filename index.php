@@ -1,8 +1,10 @@
 <?php
 //	modified by PROXIMO https://github.com/PROX1MO/Pi-Sysinfo
+//	compatible with PHP 7.2 and Buster
 	header("Cache-Control: no-cache, must-revalidate");
-	header("Expires: Sat, 26 May 1999 13:00:00 GMT");
+	header("Expires: Sat, 26 May 1983 13:00:00 GMT");
 	header("Pragma: no-cache");
+
 	function NumberWithCommas($in)
 	{
 		return number_format($in);
@@ -12,21 +14,22 @@
 		$stdout = fopen('php://stdout','w') or die($php_errormsg);
 		fputs($stdout, "\n" . $text);
 	}
+
 //	$ip = exec("ifconfig eth0 | grep 'inet addr'| cut -d: -f2 | cut -d' ' -f1");	//local ip
 	$ip = exec("curl ifconfig.co");	//external ip
 	$current_time = exec("date +'%d %b %Y - %T'");
 	$users = exec("who | wc -l");
 	$frequency = exec("cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq") / 1000;
 	$processor = str_replace("-compatible processor", "", explode(": ", exec("cat /proc/cpuinfo | grep Processor"))[1]);
-	$cpufrequtil = exec("cpufreq-info -s -m | grep 'MHz' | cut -d'(' -f1");		//requires cpufrequtils > sudo apt-get install cpufrequtils
+	$cpufrequtil = exec("cpufreq-info -s -m | grep 'MHz' | cut -d'(' -f1 | cut -d, -f1").','.exec("cpufreq-info -s -m | grep 'MHz' | cut -d'(' -f1 | cut -d, -f7") ;		//requires cpufrequtils > sudo apt-get install cpufrequtils
 	$distro = exec("lsb_release -a | grep Description | cut -d: -f2");
 	$cpu_temperature = round(exec("cat /sys/class/thermal/thermal_zone0/temp ") / 1000, 1);
-	$RX = round(exec("ifconfig eth0 | grep 'RX bytes' | cut -d: -f2 | cut -d' ' -f1") /1000000, 2);
-	$RXer = exec("ifconfig eth0 | grep 'RX packets' | cut -d: -f3 | cut -d' ' -f1");
-	$RXdr = exec("ifconfig eth0 | grep 'RX packets' | cut -d: -f4 | cut -d' ' -f1");
-	$TX = round(exec("ifconfig eth0 | grep 'TX bytes' | cut -d: -f3 | cut -d' ' -f1") /1000000, 2);
-	$TXer = exec("ifconfig eth0 | grep 'TX packets' | cut -d: -f3 | cut -d' ' -f1");
-	$TXdr = exec("ifconfig eth0 | grep 'TX packets' | cut -d: -f4 | cut -d' ' -f1");
+	$RX = round(exec("ifconfig eth0 | grep 'RX packets' | cut -d's' -f3 | cut -d' ' -f2") /1000000, 2);
+	$RXer = exec("ifconfig eth0 | grep 'RX errors' | cut -d's' -f2 | cut -d' ' -f2");
+	$RXdr = exec("ifconfig eth0 | grep 'RX errors' | cut -d'd' -f3 | cut -d' ' -f2");
+	$TX = round(exec("ifconfig eth0 | grep 'TX packets' | cut -d's' -f3 | cut -d' ' -f2") /1000000, 2);
+	$TXer = exec("ifconfig eth0 | grep 'TX errors' | cut -d'd' -f3 | cut -d' ' -f2");
+	$TXdr = exec("ifconfig eth0 | grep 'TX errors' | cut -d'd' -f3 | cut -d' ' -f2");
 	$proc_all = exec("ps -A | wc -l");
 	$proc_sleep = exec("ps -N | wc -l");
 	$proc_run = exec("ps r | wc -l");
@@ -34,7 +37,9 @@
 	$cores = exec("nproc");
 //	$loadaverages = exec("uptime | cut -d':' -f5");
 	$locale = exec("locale -a");
+//	list($system, $host, $kernel) = split(" ", exec("uname -a"), 4);
 	list($system, $host, $kernel) = preg_split("/ /", exec("uname -a"), 4);
+
 	//Uptime
 	$uptime_array = explode(" ", exec("cat /proc/uptime"));
 	$seconds = round($uptime_array[0], 0);
@@ -50,6 +55,7 @@
 	else:
 		$uptime = $days . " days " .  $hours . " h " .  $minutes . " m";
 	endif;
+
 	//CPU Usage
 	$output1 = null;
 	$output2 = null;
@@ -76,6 +82,7 @@
 		$cpuload += $load;
 	}
 	$cpuload = round($cpuload, 1); //One decimal place
+
 	// Load averages
 	$loadavg = file("/proc/loadavg");
 	if (is_array($loadavg)) {
@@ -85,11 +92,12 @@
 			if ($retval === FALSE) break; else $loadaverages .= ", " . $retval;
 		}
 	}
+
 	//Memory Utilisation
 	$meminfo = file("/proc/meminfo");
 	for ($i = 0; $i < count($meminfo); $i++)
 	{
-		list($item, $data) = split(":", $meminfo[$i], 2);
+		list($item, $data) = preg_split("/:/", $meminfo[$i], 2);
 		$item = trim(chop($item));
 		$data = intval(preg_replace("/[^0-9]/", "", trim(chop($data)))); //Remove non numeric characters
 		switch($item)
@@ -126,7 +134,7 @@
 	$count = 1;
 	while ($count < sizeof($diskfree))
 	{
-		list($drive[$count], $typex[$count], $size[$count], $used[$count], $avail[$count], $percent[$count], $mount[$count]) = split(" +", $diskfree[$count]);
+		list($drive[$count], $typex[$count], $size[$count], $used[$count], $avail[$count], $percent[$count], $mount[$count]) = preg_split("/ +/", $diskfree[$count]);
 		$percent_part[$count] = str_replace( "%", "", $percent[$count]);
 		$count++;
 	}
@@ -269,6 +277,7 @@
 				echo "\n\t\t\t\tupdateText(\"local\",\"$locale\");";
 				echo "\n\t\t\t\tupdateText(\"cpufrequtil\",\"$cpufrequtil\");";
 				echo "\n\t\t\t\tupdateText(\"uptime\",\"$uptime\");";
+
 				echo "\n\t\t\t\tupdateText(\"total_mem\",\"$total_mem\" + \" MB\");";
 				echo "\n\t\t\t\tupdateText(\"used_mem\",\"$used_mem\" + \" MB\");";
 				echo "\n\t\t\t\tupdateText(\"percent_used\",\"$percent_used%\");";
@@ -278,10 +287,12 @@
 				echo "\n\t\t\t\tupdateText(\"percent_buff\",\"$percent_buff%\");";
 				echo "\n\t\t\t\tupdateText(\"cache_mem\",\"$cache_mem\" + \" MB\");";
 				echo "\n\t\t\t\tupdateText(\"percent_cach\",\"$percent_cach%\");";
+
 				echo "\n\t\t\t\tupdateText(\"rx\",\"$RX\" + \" MB\");";
-				echo "\n\t\t\t\tupdateText(\"rxerd\",\"$RXer\" + \"/$RXdr\");";
+				echo "\n\t\t\t\tupdateText(\"rxerd\",\"$RXer\" + \" / $RXdr\");";
 				echo "\n\t\t\t\tupdateText(\"tx\",\"$TX\" + \" MB\");";
-				echo "\n\t\t\t\tupdateText(\"txerd\",\"$TXer\" + \"/$TXdr\");";
+				echo "\n\t\t\t\tupdateText(\"txerd\",\"$TXer\" + \" / $TXdr\");";
+
 				echo "\n\t\t\t\tupdateText(\"total_swap\",\"$total_swap\" + \" MB\");";
 				echo "\n\t\t\t\tupdateText(\"used_swap\",\"$used_swap\" + \" MB\");";
 				echo "\n\t\t\t\tupdateText(\"percent_swap\",\"$percent_swap%\");";
