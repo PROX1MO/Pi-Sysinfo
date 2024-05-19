@@ -24,10 +24,10 @@
 	$cpufrequtil = exec("cpufreq-info -s -m | grep 'MHz' | cut -d'(' -f1 | cut -d, -f1").','.exec("cpufreq-info -s -m | grep 'MHz' | cut -d'(' -f1 | cut -d, -f7") ;		//requires cpufrequtils > sudo apt-get install cpufrequtils
 	$distro = exec("lsb_release -a | grep Description | cut -d: -f2");
 	$cpu_temperature = round(exec("cat /sys/class/thermal/thermal_zone0/temp ") / 1000, 1);
-	$RX = round(exec("ifconfig eth0 | grep 'RX packets' | cut -d's' -f3 | cut -d' ' -f2") /1000000, 2);
+	$RX = round(exec("ifconfig eth0 | grep 'RX packets' | cut -d's' -f3 | cut -d' ' -f2") /1073741824, 2);
 	$RXer = exec("ifconfig eth0 | grep 'RX errors' | cut -d's' -f2 | cut -d' ' -f2");
 	$RXdr = exec("ifconfig eth0 | grep 'RX errors' | cut -d'd' -f3 | cut -d' ' -f2");
-	$TX = round(exec("ifconfig eth0 | grep 'TX packets' | cut -d's' -f3 | cut -d' ' -f2") /1000000, 2);
+	$TX = round(exec("ifconfig eth0 | grep 'TX packets' | cut -d's' -f3 | cut -d' ' -f2") /1073741824, 2);
 	$TXer = exec("ifconfig eth0 | grep 'TX errors' | cut -d'd' -f3 | cut -d' ' -f2");
 	$TXdr = exec("ifconfig eth0 | grep 'TX errors' | cut -d'd' -f3 | cut -d' ' -f2");
 	$proc_all = exec("ps -A | wc -l");
@@ -288,9 +288,9 @@
 				echo "\n\t\t\t\tupdateText(\"cache_mem\",\"$cache_mem\" + \" MB\");";
 				echo "\n\t\t\t\tupdateText(\"percent_cach\",\"$percent_cach%\");";
 
-				echo "\n\t\t\t\tupdateText(\"rx\",\"$RX\" + \" MB\");";
+				echo "\n\t\t\t\tupdateText(\"rx\",\"$RX\" + \" GB\");";
 				echo "\n\t\t\t\tupdateText(\"rxerd\",\"$RXer\" + \" / $RXdr\");";
-				echo "\n\t\t\t\tupdateText(\"tx\",\"$TX\" + \" MB\");";
+				echo "\n\t\t\t\tupdateText(\"tx\",\"$TX\" + \" GB\");";
 				echo "\n\t\t\t\tupdateText(\"txerd\",\"$TXer\" + \" / $TXdr\");";
 
 				echo "\n\t\t\t\tupdateText(\"total_swap\",\"$total_swap\" + \" MB\");";
